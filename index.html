@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KSM | 개발자</title>
+  <meta name="description" content="개발 연습 중인 개발자 KSM의 프로필 페이지입니다.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind 설정: 클래스 기반 다크모드, 브랜드 컬러, 폰트 -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              light: '#60a5fa',
+              DEFAULT: '#2563eb',
+              dark: '#1d4ed8'
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', 'system-ui', '-apple-system', 'Segoe UI', 'Malgun Gothic', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- 다크모드 깜빡임(FOUC) 방지: 화면이 그려지기 전에 테마를 먼저 적용한다 -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        /* localStorage를 쓸 수 없는 환경(시크릿 모드 등)에서는 기본 테마로 둔다 */
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-200 transition-colors duration-300 font-sans antialiased">
+
+  <!-- ===== 헤더 / 내비게이션 ===== -->
+  <header class="sticky top-0 z-50 border-b border-slate-200/70 bg-slate-50/80 backdrop-blur-md transition-colors duration-300 dark:border-slate-800/70 dark:bg-slate-950/80">
+    <div class="mx-auto flex h-20 max-w-5xl items-center justify-between px-6">
+
+      <a href="#home" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+        KSM<span class="text-brand">.</span>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <!-- 데스크톱 메뉴 -->
+        <nav class="hidden items-center gap-1 md:flex" aria-label="주요 메뉴">
+          <a href="#about" class="nav-link rounded-lg px-4 py-2 text-base font-medium text-slate-600 transition-colors hover:text-brand dark:text-slate-400 dark:hover:text-brand-light">소개</a>
+          <a href="#skills" class="nav-link rounded-lg px-4 py-2 text-base font-medium text-slate-600 transition-colors hover:text-brand dark:text-slate-400 dark:hover:text-brand-light">기술 스택</a>
+          <a href="#projects" class="nav-link rounded-lg px-4 py-2 text-base font-medium text-slate-600 transition-colors hover:text-brand dark:text-slate-400 dark:hover:text-brand-light">프로젝트</a>
+          <a href="#contact" class="nav-link rounded-lg px-4 py-2 text-base font-medium text-slate-600 transition-colors hover:text-brand dark:text-slate-400 dark:hover:text-brand-light">연락처</a>
+        </nav>
+
+        <!-- 다크모드 토글 -->
+        <button id="theme-toggle" type="button" aria-label="다크모드 전환"
+                class="rounded-lg border border-slate-200 p-2.5 text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-brand-light">
+          <!-- 해 아이콘: 다크모드일 때 보인다 -->
+          <svg class="hidden h-6 w-6 dark:block" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+          </svg>
+          <!-- 달 아이콘: 라이트모드일 때 보인다 -->
+          <svg class="block h-6 w-6 dark:hidden" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        </button>
+
+        <!-- 햄버거 버튼: 모바일 전용 -->
+        <button id="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu"
+                class="rounded-lg border border-slate-200 p-2.5 text-slate-600 transition-colors hover:bg-slate-100 md:hidden dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800">
+          <svg id="icon-hamburger" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
+          <svg id="icon-close" class="hidden h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 모바일 메뉴 패널 -->
+    <nav id="mobile-menu" class="hidden border-t border-slate-200 bg-slate-50 md:hidden dark:border-slate-800 dark:bg-slate-950" aria-label="모바일 메뉴">
+      <div class="space-y-1 px-6 py-4">
+        <a href="#about" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-brand-light">소개</a>
+        <a href="#skills" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-brand-light">기술 스택</a>
+        <a href="#projects" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-brand-light">프로젝트</a>
+        <a href="#contact" class="block rounded-lg px-3 py-2 text-base font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-brand dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-brand-light">연락처</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section id="home" class="flex min-h-[calc(100vh-5rem)] items-center">
+      <div class="mx-auto w-full max-w-5xl px-6 py-20 text-center">
+        <p class="reveal mb-5 inline-block rounded-full border border-brand/30 bg-brand/10 px-5 py-2 text-base font-medium text-brand dark:text-brand-light">
+          안녕하세요, 반갑습니다
+        </p>
+
+        <h1 class="reveal gradient-text mb-4 text-6xl font-extrabold tracking-tight sm:text-7xl md:text-8xl">
+          KSM
+        </h1>
+
+        <p class="reveal mb-4 text-2xl font-semibold text-slate-700 sm:text-3xl dark:text-slate-300">
+          개발자
+        </p>
+
+        <p class="reveal mx-auto mb-12 max-w-md text-lg text-slate-500 dark:text-slate-400">
+          개발 연습 중입니다.
+        </p>
+
+        <div class="reveal flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a href="#projects"
+             class="w-full rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/30 sm:w-auto">
+            프로젝트 보기
+          </a>
+          <a href="#contact"
+             class="w-full rounded-xl border border-slate-300 px-8 py-4 text-base font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-brand hover:text-brand sm:w-auto dark:border-slate-700 dark:text-slate-300 dark:hover:border-brand-light dark:hover:text-brand-light">
+            연락하기
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 소개 ===== -->
+    <section id="about" class="bg-white py-20 transition-colors md:py-28 dark:bg-slate-900/40">
+      <div class="mx-auto max-w-5xl px-6">
+        <h2 class="reveal mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl dark:text-white">소개</h2>
+        <div class="reveal mb-10 h-1 w-12 rounded-full bg-gradient-to-r from-blue-600 to-sky-500"></div>
+
+        <div class="grid gap-8 md:grid-cols-5">
+          <div class="reveal flex h-full flex-col justify-center rounded-2xl border border-slate-200 bg-slate-50 p-6 transition-colors md:col-span-3 dark:border-slate-700/60 dark:bg-slate-800/40">
+            <p class="mb-4 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
+              웹의 기본기를 차근차근 다지고 있는 개발자
+              <span class="font-semibold text-slate-900 dark:text-white">KSM</span>입니다.
+            </p>
+            <p class="leading-relaxed text-slate-600 dark:text-slate-400">
+              지금은 HTML, CSS, JavaScript로 직접 손을 움직이며 연습하는 단계입니다.
+              화면을 구조화하고, 스타일을 입히고, 동작을 붙이는 과정을 하나씩 익히면서
+              작은 프로젝트를 만들어 보고 있습니다. 배운 것을 기록하고 다시 고쳐 쓰는 일을 좋아합니다.
+            </p>
+          </div>
+
+          <div class="reveal md:col-span-2">
+            <dl class="flex h-full flex-col gap-3">
+              <div class="flex flex-1 flex-col justify-center rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors dark:border-slate-700/60 dark:bg-slate-800/40">
+                <dt class="mb-1 text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">역할</dt>
+                <dd class="font-semibold text-slate-900 dark:text-white">개발자</dd>
+              </div>
+              <div class="flex flex-1 flex-col justify-center rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors dark:border-slate-700/60 dark:bg-slate-800/40">
+                <dt class="mb-1 text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">현재 상태</dt>
+                <dd class="font-semibold text-slate-900 dark:text-white">개발 연습 중</dd>
+              </div>
+              <div class="flex flex-1 flex-col justify-center rounded-xl border border-slate-200 bg-slate-50 p-4 transition-colors dark:border-slate-700/60 dark:bg-slate-800/40">
+                <dt class="mb-1 text-xs font-medium uppercase tracking-wider text-slate-400 dark:text-slate-500">관심 분야</dt>
+                <dd class="font-semibold text-slate-900 dark:text-white">프론트엔드 · 웹 표준</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 기술 스택 ===== -->
+    <section id="skills" class="py-20 md:py-28">
+      <div class="mx-auto max-w-5xl px-6">
+        <h2 class="reveal mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl dark:text-white">기술 스택</h2>
+        <div class="reveal mb-10 h-1 w-12 rounded-full bg-gradient-to-r from-blue-600 to-sky-500"></div>
+
+        <div class="grid gap-6 md:grid-cols-3">
+
+          <!-- HTML -->
+          <article class="reveal flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-blue-500/10 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 inline-flex rounded-xl bg-sky-500/10 p-3 text-sky-500">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l-3 3 3 3m8-6l3 3-3 3M13.5 6l-3 12" />
+              </svg>
+            </div>
+            <h3 class="mb-1 text-lg font-bold text-slate-900 dark:text-white">HTML</h3>
+            <p class="mb-5 text-sm text-slate-500 dark:text-slate-400">의미에 맞는 태그로 문서를 구조화합니다.</p>
+            <div class="mt-auto mb-1.5 flex justify-between text-xs font-medium text-slate-400 dark:text-slate-500">
+              <span>숙련도</span><span>75%</span>
+            </div>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+              <div class="skill-bar h-full rounded-full bg-gradient-to-r from-sky-400 to-sky-500" data-level="75"></div>
+            </div>
+          </article>
+
+          <!-- CSS -->
+          <article class="reveal flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-blue-500/10 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 inline-flex rounded-xl bg-blue-600/10 p-3 text-blue-600">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16l-1.5 15L12 21l-6.5-2L4 4z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 8H9l.4 3.5h6.2l-.5 4L12 16.6l-2.8-1" />
+              </svg>
+            </div>
+            <h3 class="mb-1 text-lg font-bold text-slate-900 dark:text-white">CSS</h3>
+            <p class="mb-5 text-sm text-slate-500 dark:text-slate-400">레이아웃과 반응형 디자인을 연습하고 있습니다.</p>
+            <div class="mt-auto mb-1.5 flex justify-between text-xs font-medium text-slate-400 dark:text-slate-500">
+              <span>숙련도</span><span>70%</span>
+            </div>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+              <div class="skill-bar h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600" data-level="70"></div>
+            </div>
+          </article>
+
+          <!-- JavaScript -->
+          <article class="reveal flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-blue-500/10 dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 inline-flex rounded-xl bg-cyan-500/10 p-3 text-cyan-500">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3" />
+                <path stroke-linecap="round" d="M10 9v5.5a1.5 1.5 0 0 1-3 0M17 9.5a2 2 0 0 0-3.5 1.3c0 2 3.5 1.4 3.5 3.4a2 2 0 0 1-3.6 1.1" />
+              </svg>
+            </div>
+            <h3 class="mb-1 text-lg font-bold text-slate-900 dark:text-white">JavaScript</h3>
+            <p class="mb-5 text-sm text-slate-500 dark:text-slate-400">DOM 조작과 이벤트 처리를 익히는 중입니다.</p>
+            <div class="mt-auto mb-1.5 flex justify-between text-xs font-medium text-slate-400 dark:text-slate-500">
+              <span>숙련도</span><span>60%</span>
+            </div>
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
+              <div class="skill-bar h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-500" data-level="60"></div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 프로젝트 ===== -->
+    <section id="projects" class="py-20 md:py-28">
+      <div class="mx-auto max-w-5xl px-6">
+        <h2 class="reveal mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl dark:text-white">프로젝트</h2>
+        <div class="reveal mb-4 h-1 w-12 rounded-full bg-gradient-to-r from-blue-600 to-sky-500"></div>
+        <p class="reveal mb-10 text-slate-500 dark:text-slate-400">연습하며 만들어 본 작은 프로젝트들입니다.</p>
+
+        <!-- 카드는 script.js의 projects 배열을 읽어 이 안에 그려집니다 -->
+        <div id="project-list" class="grid gap-6 md:grid-cols-3"></div>
+      </div>
+    </section>
+
+    <!-- ===== 연락처 ===== -->
+    <section id="contact" class="bg-white py-20 transition-colors md:py-28 dark:bg-slate-900/40">
+      <div class="mx-auto max-w-5xl px-6">
+        <h2 class="reveal mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl dark:text-white">연락처</h2>
+        <div class="reveal mb-4 h-1 w-12 rounded-full bg-gradient-to-r from-blue-600 to-sky-500"></div>
+        <p class="reveal mb-10 text-slate-500 dark:text-slate-400">궁금한 점이 있으시면 아래 폼으로 메시지를 남겨주세요.</p>
+
+        <form id="contact-form" class="reveal mx-auto max-w-xl space-y-8" novalidate>
+          <div>
+            <label for="name" class="mb-2 block text-base font-medium text-slate-700 dark:text-slate-300">이름</label>
+            <input type="text" id="name" name="name" placeholder="홍길동"
+                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-900 placeholder-slate-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder-slate-600">
+            <p class="error-message mt-1.5 hidden text-xs text-red-500"></p>
+          </div>
+
+          <div>
+            <label for="email" class="mb-2 block text-base font-medium text-slate-700 dark:text-slate-300">이메일</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com"
+                   class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-900 placeholder-slate-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder-slate-600">
+            <p class="error-message mt-1.5 hidden text-xs text-red-500"></p>
+          </div>
+
+          <div>
+            <label for="message" class="mb-2 block text-base font-medium text-slate-700 dark:text-slate-300">메시지</label>
+            <textarea id="message" name="message" rows="5" placeholder="남기실 말씀을 적어주세요."
+                      class="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-base text-slate-900 placeholder-slate-400 outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 dark:border-slate-800 dark:bg-slate-950 dark:text-white dark:placeholder-slate-600"></textarea>
+            <p class="error-message mt-1.5 hidden text-xs text-red-500"></p>
+          </div>
+
+          <button type="submit"
+                  class="w-full rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/30">
+            메시지 보내기
+          </button>
+
+          <!-- 전송 결과 안내가 표시되는 자리 -->
+          <p id="form-status" role="status" class="hidden rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-4 text-center text-base font-medium text-emerald-600 dark:text-emerald-400"></p>
+
+          <p class="text-center text-xs text-slate-400 dark:text-slate-600">
+            이 폼은 연습용 데모입니다. 입력한 내용은 실제로 전송되거나 저장되지 않습니다.
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== 푸터 ===== -->
+  <footer class="border-t border-slate-200 py-8 transition-colors dark:border-slate-800">
+    <div class="mx-auto flex max-w-5xl flex-col items-center justify-between gap-3 px-6 sm:flex-row">
+      <p class="text-sm text-slate-500">&copy; 2026 KSM. All rights reserved.</p>
+      <a href="#home" class="text-sm font-medium text-slate-500 transition-colors hover:text-brand dark:hover:text-brand-light">맨 위로 &uarr;</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

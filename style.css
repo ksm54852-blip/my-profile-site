@@ -1,0 +1,126 @@
+/* ==========================================================================
+   style.css
+   Tailwind CDN이 담당하지 않는 것만 여기에 둡니다.
+   (스크롤 동작, 등장 애니메이션, 그라디언트 텍스트, 스크롤바)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 부드러운 스크롤
+   내비 링크를 눌렀을 때 화면이 스르륵 이동합니다.
+   scroll-padding-top은 상단 고정 헤더(높이 5rem)에 제목이 가리지 않도록
+   여유를 주는 값입니다.
+   -------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. 스크롤 등장 애니메이션
+   .reveal 요소는 처음에 투명한 상태로 아래쪽에 있다가,
+   script.js의 IntersectionObserver가 .active를 붙여주면 제자리로 올라옵니다.
+   -------------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 같은 섹션 안의 .reveal들이 살짝씩 시차를 두고 나타나도록 합니다. */
+.reveal:nth-child(2) { transition-delay: 0.1s; }
+.reveal:nth-child(3) { transition-delay: 0.2s; }
+.reveal:nth-child(4) { transition-delay: 0.3s; }
+.reveal:nth-child(5) { transition-delay: 0.4s; }
+
+/* --------------------------------------------------------------------------
+   3. 숙련도 바
+   너비는 script.js가 채워 넣습니다. 여기서는 채워지는 속도만 정합니다.
+   -------------------------------------------------------------------------- */
+.skill-bar {
+  width: 0;
+  transition: width 1s ease-out 0.2s;
+}
+
+/* --------------------------------------------------------------------------
+   4. 그라디언트 텍스트 (Hero의 이름)
+   배경 그라디언트를 글자 모양으로만 잘라서 보여주는 방식입니다.
+   -------------------------------------------------------------------------- */
+.gradient-text {
+  background-image: linear-gradient(120deg, #1d4ed8, #2563eb, #0ea5e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   5. 현재 보고 있는 섹션의 내비 링크 강조
+   script.js가 .active를 붙이고 떼어냅니다.
+   Tailwind가 만든 색상 유틸리티를 확실히 덮어쓰기 위해 !important를 씁니다.
+   -------------------------------------------------------------------------- */
+.nav-link.active {
+  color: #2563eb !important;
+}
+
+.dark .nav-link.active {
+  color: #60a5fa !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. 커스텀 스크롤바 (Chrome, Edge 계열)
+   -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border: 2px solid #f1f5f9;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 */
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a; /* slate-900 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border-color: #0f172a;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+}
+
+/* --------------------------------------------------------------------------
+   7. 애니메이션을 줄이도록 설정한 사용자 배려
+   OS에서 "동작 줄이기"를 켠 사용자에게는 움직임을 없앱니다.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    transition-delay: 0s;
+  }
+
+  .skill-bar {
+    transition: none;
+  }
+}
